@@ -21,10 +21,15 @@ class TestUser(TestCase):
         self.assertTrue(isinstance(self.user, User))
         self.assertEqual(str(user_details), "User with email foo@bar.com has 10 resources left")
 
-    def test_an_invalid_email_for_user_created_in_db_return_details_and_is_of_type_user(self):
-        test_user = User.objects.create(email='blahblah',
-                                        password='Qwerty@12',
-                                        resources=10)
+    def test_to_get_user_with_email_that_is_not_of_type_user_raises_object_does_not_exist_error(self):
+        def get_invalid_object():
+            try:
+                Resource.objects.get(email="something@not.there")
+            except:
+                raise ObjectDoesNotExist
+
+        with self.assertRaises(ObjectDoesNotExist):
+            get_invalid_object()
 
 
 class TestResource(TestCase):
@@ -53,7 +58,7 @@ class TestResource(TestCase):
 
         self.assertRaises(ValueError, insert_invalid_object)
 
-    def test_to_create_resource_with_email_that_is_not_of_type_user_raises_object_does_not_exist_error(self):
+    def test_to_get_resource_with_uuid_that_is_not_of_type_user_raises_object_does_not_exist_error(self):
         def get_invalid_object():
             try:
                 Resource.objects.get(uuid=uuid.uuid4())
