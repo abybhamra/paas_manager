@@ -6,7 +6,7 @@ from django.test import TestCase
 from api.models import User, Resource
 
 
-class TestUser(TestCase):
+class TestUserModel(TestCase):
 
     def setUp(self):
         self.user = User.objects.create(email='foo@bar.com',
@@ -32,7 +32,7 @@ class TestUser(TestCase):
             get_invalid_object()
 
 
-class TestResource(TestCase):
+class TestResourceModel(TestCase):
 
     def setUp(self):
         self.guid = str(uuid.uuid4())
