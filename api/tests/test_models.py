@@ -1,7 +1,8 @@
 import uuid
 
 from django.core.exceptions import ObjectDoesNotExist
-from django.test import TestCase
+from django.db import IntegrityError
+from django.test import TestCase, tag
 
 from api.models import User, Resource
 
@@ -24,6 +25,20 @@ class TestUserModel(TestCase):
         self.assertEqual(user_details.email, 'foo@bar.com')
         self.assertEqual(user_details.resources, '10')
         self.assertEqual(str(user_details), 'User ' + self.user_id + ' with email foo@bar.com has 10 resources left')
+
+    @tag("WIP")
+    def test_a_valid_repeat_user_raises_integrity_error(self):
+        def create_repeat_object():
+            try:
+                User.objects.create(user_id=self.user.user_id,
+                                    email='foobar@baz.com',
+                                    password='Qwerty@12',
+                                    resources=10)
+            except:
+                raise IntegrityError
+
+        with self.assertRaises(IntegrityError):
+            create_repeat_object()
 
     def test_to_get_user_with_email_that_is_not_of_type_user_raises_object_does_not_exist_error(self):
         def get_invalid_object():
