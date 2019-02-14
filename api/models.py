@@ -2,7 +2,7 @@ from django.db import models
 
 
 class User(models.Model):
-    user_id = models.CharField(primary_key=True, null=False, max_length=16)
+    user_id = models.CharField(primary_key=True, null=False, max_length=50)
     email = models.EmailField(null=False)
     password = models.CharField(null=False, max_length=16)
     is_admin = models.BooleanField('admin status', default=False)
