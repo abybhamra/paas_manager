@@ -9,7 +9,7 @@ class User(models.Model):
     resources = models.CharField(max_length=255, default=None)
 
     def __str__(self):
-        return "User with email {} has {} resources left".format(self.email, self.resources)
+        return "User {} with email {} has {} resources left".format(self.user_id, self.email, self.resources)
 
 
 class Resource(models.Model):
