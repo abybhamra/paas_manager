@@ -1,4 +1,5 @@
-from django.contrib.auth.models import User, Group
+from django.contrib.auth import get_user_model
+from django.contrib.auth.models import Group
 from rest_framework import viewsets
 from rest_framework.authentication import SessionAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
@@ -8,9 +9,11 @@ from .models import Resource
 from .serializers import ResourceSerializer
 from .serializers import UserSerializer, GroupSerializer
 
+UserModel = get_user_model()
+
 
 class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all().order_by('-date_joined')
+    queryset = UserModel.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
 
 

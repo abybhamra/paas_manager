@@ -1,11 +1,10 @@
 import uuid
 
-from django.contrib.auth.models import User
 from django.core.exceptions import ObjectDoesNotExist
 from django.db import IntegrityError
 from django.test import TestCase
 
-from api.models import Resource
+from api.models import Resource, User
 
 
 class TestUserModel(TestCase):
@@ -19,6 +18,7 @@ class TestUserModel(TestCase):
         user_details = User.objects.get(username='test_user')
         self.assertTrue(isinstance(self.user, User))
         self.assertEqual(user_details.email, 'test@user.com')
+        self.assertEqual(user_details.quota, None)
 
     def test_a_repeat_user_raises_integrity_error(self):
         with self.assertRaises(IntegrityError):

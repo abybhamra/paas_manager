@@ -1,6 +1,6 @@
 import uuid
 
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.urls import reverse
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.views import status
@@ -11,7 +11,7 @@ from api.serializers import UserSerializer
 
 def create_user(username='', email='', password=''):
     if username and email and password:
-        user = User.objects.create(username=username, email=email, password=password)
+        user = get_user_model().objects.create(username=username, email=email, password=password)
         return user
 
 

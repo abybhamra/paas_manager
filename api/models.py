@@ -1,5 +1,9 @@
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
 from django.db import models
+
+
+class User(AbstractUser):
+    quota = models.IntegerField(default=None, null=True)
 
 
 class Resource(models.Model):
