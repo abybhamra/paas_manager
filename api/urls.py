@@ -1,14 +1,13 @@
-from django.urls import path
-from rest_framework.urlpatterns import format_suffix_patterns
+from django.urls import path, include
+from rest_framework import routers
 
 from api.views import ResourceViewSet
+from api.views import UserViewSet
 
-resources_list = ResourceViewSet.as_view({'get': 'list'})
-resource_details = ResourceViewSet.as_view({'get': 'retrieve',
-                                            'put': 'update',
-                                            'patch': 'partial_update',
-                                            'delete': 'destroy'})
-urlpatterns = format_suffix_patterns([
-    path('resources/', resources_list, name='resources-list'),
-    path('resources/<str:pk>/', resource_details, name='resource-details')
-])
+router = routers.DefaultRouter()
+router.register(r'users', UserViewSet)
+router.register(r'resources', ResourceViewSet)
+
+urlpatterns = [
+    path('', include(router.urls))
+]
