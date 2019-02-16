@@ -4,6 +4,7 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
+from api.serializers import ResourceAdminSerializer
 from .models import Resource
 from .serializers import ResourceSerializer
 from .serializers import UserSerializer
@@ -36,5 +37,18 @@ class ResourceViewSet(viewsets.ModelViewSet):
             queryset = queryset.filter(user=self.request.user)
         return queryset
 
+    def get_serializer_class(self):
+        if self.request.user.is_admin:
+            return ResourceAdminSerializer
+        return ResourceSerializer
+
     def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+        owner = self._get_owner()
+        serializer.save(user=owner)
+
+    def _get_owner(self):
+        owner = self.request.user
+        post_param_owner_email = self.request.POST.get("user")
+        if owner.is_admin and owner.email != post_param_owner_email:
+            owner = UserModel.objects.get(email=post_param_owner_email)
+        return owner

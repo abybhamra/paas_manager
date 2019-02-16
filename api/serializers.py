@@ -2,7 +2,7 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
 
-from .models import Resource
+from .models import Resource, User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -19,8 +19,16 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class ResourceSerializer(serializers.ModelSerializer):
-    owner = serializers.ReadOnlyField(source='user.email')
+    user = serializers.ReadOnlyField(source='user.email')
 
     class Meta:
         model = Resource
-        fields = ('owner', 'uuid')
+        fields = ('user', 'uuid')
+
+
+class ResourceAdminSerializer(serializers.ModelSerializer):
+    user = serializers.ChoiceField(choices=[u.email for u in User.objects.all()])
+
+    class Meta:
+        model = Resource
+        fields = ('uuid', 'user')

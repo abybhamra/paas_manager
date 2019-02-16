@@ -6,7 +6,8 @@ from django.urls import reverse
 from rest_framework.test import APITestCase, APIClient
 from rest_framework.views import status
 
-from api.models import Resource
+from api.models import Resource, User
+from api.models import UserManager
 
 
 def create_user(email='', password=''):
@@ -21,6 +22,27 @@ def create_resource(user):
         guid = str(uuid.uuid4())
         res = Resource.objects.create(user=user, uuid=guid)
         return res
+
+
+class TestUserViewSet(APITestCase):
+
+    def setUp(self):
+        self.api_client = APIClient()
+        self.user_mgr = UserManager()
+        self.user = create_user(email='abhi@abhi.com', password='qwerty123')
+        self.resource = create_resource(self.user)
+
+    def test_if_normal_user_queries_users_get_its_own_data(self):
+        self.api_client.force_authenticate(user=self.user)
+        response = self.api_client.get(reverse('user-list'), format='json')
+
+        self.assertTrue("('email', 'abhi@abhi.com')" in str(response.data))
+
+    def test_if_admin_queries_users_gets_all_data(self):
+        admin = User.objects.create(email='admin@abhi.com', password='qwerty123', is_admin=True)
+        self.api_client.force_authenticate(user=admin)
+        response = self.api_client.get(reverse('user-list'), format='json')
+        print(response.data)
 
 
 class TestResourceViewDetailsWithoutAuth(APITestCase):
@@ -61,7 +83,7 @@ class TestResourceViewDetailsWithAuth(APITestCase):
         response = self.api_client.get(reverse('resource-detail', args=[self.resource.uuid]), format='json')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['owner'], self.resource.user.email)
+        self.assertEqual(response.data['user'], self.resource.user.email)
 
     def test_create_a_resource_when_post_is_not_allowed_gives_405_method_not_allowed(self):
         response = self.api_client.post(reverse('resource-detail', args=[self.resource.uuid]), format='json')

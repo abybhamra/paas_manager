@@ -7,6 +7,34 @@ from django.test import TestCase
 from api.models import Resource, User
 
 
+class TestUserManager(TestCase):
+    def test_create_a_invalid_user_raises_value_error(self):
+        with self.assertRaises(ValueError):
+            User.objects.create_user(email='',
+                                     password='foobar')
+
+    def test_create_a_valid_user(self):
+        user = User.objects.create_user(email='test@user.com',
+                                        password='foobar')
+        user_details = User.objects.get(email='test@user.com')
+        self.assertTrue(isinstance(user, User))
+        self.assertEqual(user_details.email, 'test@user.com')
+        self.assertEqual(user_details.quota, None)
+
+    def test_create_a_invalid_super_user_raises_value_error(self):
+        with self.assertRaises(ValueError):
+            User.objects.create_superuser(email='test@user.com',
+                                          password='foobar', is_admin=False)
+
+    def test_create_a_valid_super_user(self):
+        user = User.objects.create_superuser(email='test@user.com',
+                                             password='foobar', is_admin=True)
+        user_details = User.objects.get(email='test@user.com')
+        self.assertTrue(isinstance(user, User))
+        self.assertEqual(user_details.email, 'test@user.com')
+        self.assertEqual(user_details.quota, None)
+
+
 class TestUserModel(TestCase):
 
     def setUp(self):
