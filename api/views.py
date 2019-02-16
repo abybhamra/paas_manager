@@ -4,6 +4,7 @@ from rest_framework.authentication import SessionAuthentication
 from rest_framework.decorators import authentication_classes, permission_classes
 from rest_framework.permissions import IsAuthenticated
 
+from api.permissions import IsAdminUser
 from api.serializers import ResourceAdminSerializer
 from .models import Resource
 from .serializers import ResourceSerializer
@@ -13,7 +14,7 @@ UserModel = get_user_model()
 
 
 @authentication_classes((SessionAuthentication,))
-@permission_classes((IsAuthenticated,))
+@permission_classes((IsAuthenticated, IsAdminUser))
 class UserViewSet(viewsets.ModelViewSet):
     queryset = UserModel.objects.all()
     serializer_class = UserSerializer
