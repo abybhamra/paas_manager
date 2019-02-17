@@ -1,0 +1,12 @@
+language:
+  - python
+python:
+  - "3.5"
+
+# command to run tests
+install:
+  - pip install -r requirements.txt
+
+script:
+  - coverage manage.py test api
+  - coverage report -m

@@ -7,7 +7,7 @@ from .models import Resource, User
 
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField()
-    password = serializers.CharField(write_only=True)
+    password = serializers.CharField()
     quota = serializers.IntegerField()
 
     def create(self, validated_data):
