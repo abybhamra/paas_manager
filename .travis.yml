@@ -9,4 +9,4 @@ install:
 
 script:
   - coverage run manage.py test api
-  - coverage report -m
+  - coverage report

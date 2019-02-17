@@ -1,5 +1,5 @@
 .idea
-.coverage*
+.coverage
 htmlcov
 *sqlite*
 **/__pycache__
