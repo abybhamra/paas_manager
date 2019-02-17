@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.hashers import make_password
 from rest_framework import serializers
+from rest_framework.relations import PrimaryKeyRelatedField
 
 from .models import Resource, User
 
@@ -28,7 +29,7 @@ class ResourceSerializer(serializers.ModelSerializer):
 
 
 class ResourceAdminSerializer(serializers.ModelSerializer):
-    user = serializers.ChoiceField(choices=[u.email for u in User.objects.all()])
+    user = PrimaryKeyRelatedField(queryset=User.objects.all())
 
     class Meta:
         model = Resource

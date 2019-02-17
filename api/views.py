@@ -49,7 +49,10 @@ class ResourceViewSet(viewsets.ModelViewSet):
 
     def _get_owner(self):
         owner = self.request.user
-        post_param_owner_email = self.request.POST.get("user")
-        if owner.is_admin and owner.email != post_param_owner_email:
-            owner = UserModel.objects.get(email=post_param_owner_email)
+
+        post_param_user_id = self.request.POST.get("user")
+        post_param_user = UserModel.objects.get(id=post_param_user_id) if post_param_user_id else None
+        if owner.is_admin and owner.email != post_param_user:
+            owner = UserModel.objects.get(email=post_param_user)
+
         return owner
