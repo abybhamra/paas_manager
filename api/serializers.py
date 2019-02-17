@@ -31,4 +31,4 @@ class ResourceAdminSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Resource
-        fields = ('uuid', 'user')
+        fields = ('user', 'uuid')
