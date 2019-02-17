@@ -8,6 +8,7 @@ from .models import Resource, User
 class UserSerializer(serializers.ModelSerializer):
     email = serializers.EmailField()
     password = serializers.CharField(write_only=True)
+    quota = serializers.IntegerField()
 
     def create(self, validated_data):
         validated_data['password'] = make_password(validated_data.get('password'))
@@ -15,7 +16,7 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = ('id', 'email', 'password')
+        fields = ('id', 'email', 'password', 'quota')
 
 
 class ResourceSerializer(serializers.ModelSerializer):

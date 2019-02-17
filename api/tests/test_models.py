@@ -1,6 +1,6 @@
 import uuid
 
-from django.core.exceptions import ObjectDoesNotExist
+from django.core.exceptions import ObjectDoesNotExist, ValidationError
 from django.db import IntegrityError
 from django.test import TestCase
 
@@ -74,10 +74,19 @@ class TestResourceModel(TestCase):
         self.assertEqual(resource_details.user.email, 'test@user.com')
         self.assertEqual(str(resource_details), 'Resource id ' + self.guid)
 
-    def test_to_create_resource_with_an_invalid_user_object_relation_type_raises_value_error_error(self):
-        with self.assertRaises(ValueError):
+    def test_to_create_resource_with_an_invalid_user_object_relation_type_raises_attribute_error_error(self):
+        with self.assertRaises(AttributeError):
             Resource.objects.create(user='blah', uuid=self.guid)
 
     def test_to_get_resource_not_in_db_raises_object_does_not_exist_error(self):
         with self.assertRaises(ObjectDoesNotExist):
             Resource.objects.get(uuid=uuid.uuid4())
+
+    def test_should_raise_a_validation_error_when_users_number_of_resources_exceed_the_quota(self):
+        User.objects.create(email='check@resources.com', password='foobar', quota=1)
+        user = User.objects.get(email='check@resources.com')
+        Resource.objects.create(user=user, uuid=uuid.uuid4())
+        with self.assertRaises(ValidationError) as error:
+            Resource.objects.create(user=user, uuid=uuid.uuid4())
+
+        self.assertEqual(error.exception.message, "Resource limit exceeded!")
