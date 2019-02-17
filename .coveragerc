@@ -1,0 +1,4 @@
+[run]
+include = api/*
+source = api
+omit = /*/tests/*
