@@ -1,27 +1,39 @@
-.PHONY: clean bootstrap test coverage migratedb runserver
+PYTHON=${PYENV}/bin/python
+PYENV=paas_mgr_env
 
-clean:
+.DEFAULT: help
+help:
+	@echo "Available commands are:"
+	@echo "make run_api"
+	@echo "make run_test"
+
+clean_slate:
 	find . -name "*.pyc" -print0 | xargs -0 rm -rf
+	-rm -rf *pycache*
 	-rm -rf htmlcov
 	-rm -rf .coverage
 
-virtualenv:
-	virtualenv --no-site-packages $(VIRTUAL_ENV)
-	echo $(VIRTUAL_ENV)
+prepare_env:clean_slate
+	python3 -m venv ${PYENV}
+	. ./${PYENV}/bin/activate
+	${PYTHON} -m pip install -U pip
+	${PYTHON} -m pip install -r requirements.txt
 
-pip: requirements.txt
-	pip install -r requirements.txt
+source_env:
+	. ./${PYENV}/bin/activate
 
-bootstrap: virtualenv pip
+migrate_db:
+	${PYTHON} manage.py migrate
 
-test: clean
-	coverage run manage.py test api
+run_server:
+	${PYTHON} manage.py runserver
 
-coverage:
-	coverage html --omit="*/admin.py,*/test*"
+run_test:
+	${PYTHON} -m coverage run manage.py test api
 
-migratedb:
-	python manage.py migrate
+generate_coverage:
+	${PYTHON} -m coverage html --omit="*/admin.py,*/test*"
 
-runserver:
-	python manage.py runserver
+run_test: prepare_env source_env migrate_db run_test generate_coverage
+
+run_api:prepare_env source_env migrate_db run_server
